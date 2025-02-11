@@ -23,7 +23,13 @@ import { useMemoizedFn, usePrevious } from "ahooks";
 
 import InteractiveAvatarTextInput from "./InteractiveAvatarTextInput";
 
-import {AVATARS, STT_LANGUAGE_LIST} from "@/app/lib/constants";
+import { AVATARS, STT_LANGUAGE_LIST } from "@/app/lib/constants";
+
+import { OpenAIAssistant } from "@/services/openia";
+import ElevenLab from "./elevenLab";
+
+const OPENIA_API = process.env.OPENAI_API_KEY;
+console.log("OpenAI API Key:", OPENIA_API);
 
 export default function InteractiveAvatar() {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
@@ -38,8 +44,10 @@ export default function InteractiveAvatar() {
   const [text, setText] = useState<string>("");
   const mediaStream = useRef<HTMLVideoElement>(null);
   const avatar = useRef<StreamingAvatar | null>(null);
-  const [chatMode, setChatMode] = useState("text_mode");
+  const [chatMode, setChatMode] = useState("alone_voice");
   const [isUserTalking, setIsUserTalking] = useState(false);
+
+  const [iaAssistent, setIaAssistent] = useState<any>();
 
   async function fetchAccessToken() {
     try {
@@ -47,9 +55,10 @@ export default function InteractiveAvatar() {
         method: "POST",
       });
       const token = await response.text();
-
       console.log("Access Token:", token); // Log the token to verify
-
+      const assistant = new OpenAIAssistant(OPENIA_API);
+      await assistant.initialize();
+      setIaAssistent(assistant);
       return token;
     } catch (error) {
       console.error("Error fetching access token:", error);
@@ -61,6 +70,7 @@ export default function InteractiveAvatar() {
   async function startSession() {
     setIsLoadingSession(true);
     const newToken = await fetchAccessToken();
+
 
     avatar.current = new StreamingAvatar({
       token: newToken,
@@ -90,8 +100,7 @@ export default function InteractiveAvatar() {
     try {
       const res = await avatar.current.createStartAvatar({
         quality: AvatarQuality.Low,
-        avatarName: avatarId,
-        knowledgeId: knowledgeId, // Or use a custom `knowledgeBase`.
+        avatarName: 'Anna_public_3_20240108',
         voice: {
           rate: 1.5, // 0.5 ~ 1.5
           emotion: VoiceEmotion.EXCITED,
@@ -102,7 +111,7 @@ export default function InteractiveAvatar() {
           //   use_speaker_boost: false,
           // },
         },
-        language: language,
+        language: 'es',
         disableIdleTimeout: true,
       });
 
@@ -126,7 +135,8 @@ export default function InteractiveAvatar() {
       return;
     }
     // speak({ text: text, task_type: TaskType.REPEAT })
-    await avatar.current.speak({ text: text, taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC }).catch((e) => {
+    const response = await iaAssistent.getResponse(text);
+    await avatar.current.speak({ text: response, taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC }).catch((e) => {
       setDebug(e.message);
     });
     setIsLoadingRepeat(false);
@@ -189,7 +199,7 @@ export default function InteractiveAvatar() {
     <div className="w-full flex flex-col gap-4">
       <Card>
         <CardBody className="h-[500px] flex flex-col justify-center items-center">
-          {stream ? (
+          {chatMode === 'alone_voice' ? <ElevenLab /> : stream ? (
             <div className="h-[500px] w-[900px] justify-center items-center flex rounded-lg overflow-hidden">
               <video
                 ref={mediaStream}
@@ -224,62 +234,14 @@ export default function InteractiveAvatar() {
             </div>
           ) : !isLoadingSession ? (
             <div className="h-full justify-center items-center flex flex-col gap-8 w-[500px] self-center">
-              <div className="flex flex-col gap-2 w-full">
-                <p className="text-sm font-medium leading-none">
-                  Custom Knowledge ID (optional)
-                </p>
-                <Input
-                  placeholder="Enter a custom knowledge ID"
-                  value={knowledgeId}
-                  onChange={(e) => setKnowledgeId(e.target.value)}
-                />
-                <p className="text-sm font-medium leading-none">
-                  Custom Avatar ID (optional)
-                </p>
-                <Input
-                  placeholder="Enter a custom avatar ID"
-                  value={avatarId}
-                  onChange={(e) => setAvatarId(e.target.value)}
-                />
-                <Select
-                  placeholder="Or select one from these example avatars"
-                  size="md"
-                  onChange={(e) => {
-                    setAvatarId(e.target.value);
-                  }}
-                >
-                  {AVATARS.map((avatar) => (
-                    <SelectItem
-                      key={avatar.avatar_id}
-                      textValue={avatar.avatar_id}
-                    >
-                      {avatar.name}
-                    </SelectItem>
-                  ))}
-                </Select>
-                <Select
-                  label="Select language"
-                  placeholder="Select language"
-                  className="max-w-xs"
-                  selectedKeys={[language]}
-                  onChange={(e) => {
-                    setLanguage(e.target.value);
-                  }}
-                >
-                  {STT_LANGUAGE_LIST.map((lang) => (
-                    <SelectItem key={lang.key}>
-                      {lang.label}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
+
               <Button
                 className="bg-gradient-to-tr from-indigo-500 to-indigo-300 w-full text-white"
                 size="md"
                 variant="shadow"
                 onClick={startSession}
               >
-                Start session
+                iniciar sesion
               </Button>
             </div>
           ) : (
@@ -295,10 +257,11 @@ export default function InteractiveAvatar() {
               handleChangeChatMode(v);
             }}
           >
-            <Tab key="text_mode" title="Text mode" />
-            <Tab key="voice_mode" title="Voice mode" />
+            <Tab key="text_mode" title="Modo chat" />
+            <Tab key="voice_mode" title="Modo chat de voz" />
+            <Tab key="alone_voice" title="Modo voz" />
           </Tabs>
-          {chatMode === "text_mode" ? (
+          {chatMode === "text_mode" && (
             <div className="w-full flex relative">
               <InteractiveAvatarTextInput
                 disabled={!stream}
@@ -313,7 +276,9 @@ export default function InteractiveAvatar() {
                 <Chip className="absolute right-16 top-3">Listening</Chip>
               )}
             </div>
-          ) : (
+          )}
+
+          {chatMode === "voice_mode" && (
             <div className="w-full text-center">
               <Button
                 isDisabled={!isUserTalking}
@@ -323,6 +288,12 @@ export default function InteractiveAvatar() {
               >
                 {isUserTalking ? "Listening" : "Voice chat"}
               </Button>
+            </div>
+          )}
+
+          {chatMode === "alone_voice" && (
+            <div>
+              holis
             </div>
           )}
         </CardFooter>
