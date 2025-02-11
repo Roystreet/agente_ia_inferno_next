@@ -111,7 +111,7 @@ const ElevenLab = () => {
                                 className="w-full"
                             >
                                 <MicOff className="mr-2 h-4 w-4" />
-                                End Conversation
+                                Terminar conversación
                             </Button>
                         ) : (
                             <Button
