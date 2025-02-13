@@ -1,13 +1,15 @@
 import OpenAI from "openai";
 import promptMarketingDante from "@/templates/marketing";
 
+const OPENI_IA_API_KEY: string = process.env.OPENAI_API_KEY || "";
+
 export class OpenAIAssistant {
     private client: OpenAI;
     private assistant: any;
     private thread: any;
 
     constructor(apiKey: string) {
-        this.client = new OpenAI({ apiKey: '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', dangerouslyAllowBrowser: true });
+        this.client = new OpenAI({ apiKey: OPENI_IA_API_KEY, dangerouslyAllowBrowser: true });
     }
 
     async initialize(
