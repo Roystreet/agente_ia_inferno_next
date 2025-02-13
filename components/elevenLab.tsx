@@ -9,6 +9,10 @@ import { useConversation } from "@11labs/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mic, MicOff, Volume2, VolumeX } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
+
+const ELEVENLAB_AGENT_ID: string = process.env.NEXT_PUBLIC_ELEVENLABS_AGENT_ID || "";
 
 const ElevenLab = () => {
     const [hasPermission, setHasPermission] = useState(false);
@@ -52,7 +56,7 @@ const ElevenLab = () => {
         try {
             // Replace with your actual agent ID or URL
             const conversationId = await conversation.startSession({
-                agentId: 'yi6cUOndIXMzpJQK180b',
+                agentId: ELEVENLAB_AGENT_ID,
             });
             console.log("Started conversation:", conversationId);
         } catch (error) {
@@ -81,66 +85,73 @@ const ElevenLab = () => {
     };
 
     return (
-        <Card className="w-full max-w-md mx-auto">
-            <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    Hablemos con dante
-                    <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={toggleMute}
-                            disabled={status !== "connected"}
-                        >
-                            {isMuted ? (
-                                <VolumeX className="h-4 w-4" />
+        <>
+            <Avatar className="w-48 h-48" >
+                <AvatarImage src="/Dante.jpeg" alt="Dante" />
+                <AvatarFallback>Dante</AvatarFallback>
+            </Avatar>
+            <Separator className="my-4" />
+            <Card className="w-full max-w-md mx-auto">
+                <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                        Hablemos con dante
+                        <div className="flex gap-2">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={toggleMute}
+                                disabled={status !== "connected"}
+                            >
+                                {isMuted ? (
+                                    <VolumeX className="h-4 w-4" />
+                                ) : (
+                                    <Volume2 className="h-4 w-4" />
+                                )}
+                            </Button>
+                        </div>
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        <div className="flex justify-center">
+                            {status === "connected" ? (
+                                <Button
+                                    variant="destructive"
+                                    onClick={handleEndConversation}
+                                    className="w-full"
+                                >
+                                    <MicOff className="mr-2 h-4 w-4" />
+                                    Terminar conversación
+                                </Button>
                             ) : (
-                                <Volume2 className="h-4 w-4" />
+                                <Button
+                                    onClick={handleStartConversation}
+                                    disabled={!hasPermission}
+                                    className="w-full"
+                                >
+                                    <Mic className="mr-2 h-4 w-4" />
+                                    Iniciar conversación
+                                </Button>
                             )}
-                        </Button>
-                    </div>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="flex justify-center">
-                        {status === "connected" ? (
-                            <Button
-                                variant="destructive"
-                                onClick={handleEndConversation}
-                                className="w-full"
-                            >
-                                <MicOff className="mr-2 h-4 w-4" />
-                                Terminar conversación
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={handleStartConversation}
-                                disabled={!hasPermission}
-                                className="w-full"
-                            >
-                                <Mic className="mr-2 h-4 w-4" />
-                                Iniciar conversación
-                            </Button>
-                        )}
-                    </div>
+                        </div>
 
-                    <div className="text-center text-sm">
-                        {status === "connected" && (
-                            <p className="text-green-600">
-                                {isSpeaking ? "Agent is speaking..." : "Listening..."}
-                            </p>
-                        )}
-                        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-                        {!hasPermission && (
-                            <p className="text-yellow-600">
-                                Please allow microphone access to use voice chat
-                            </p>
-                        )}
+                        <div className="text-center text-sm">
+                            {status === "connected" && (
+                                <p className="text-green-600">
+                                    {isSpeaking ? "Agent is speaking..." : "Listening..."}
+                                </p>
+                            )}
+                            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+                            {!hasPermission && (
+                                <p className="text-yellow-600">
+                                    Please allow microphone access to use voice chat
+                                </p>
+                            )}
+                        </div>
                     </div>
-                </div>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </>
     );
 };
 

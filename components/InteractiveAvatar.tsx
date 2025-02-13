@@ -28,8 +28,7 @@ import { AVATARS, STT_LANGUAGE_LIST } from "@/app/lib/constants";
 import { OpenAIAssistant } from "@/services/openia";
 import ElevenLab from "./elevenLab";
 
-const OPENIA_API = process.env.OPENAI_API_KEY;
-console.log("OpenAI API Key:", OPENIA_API);
+const OPENIA_API: string = process.env.NEXT_PUBLIC_OPENIA_API_KEY || "";
 
 export default function InteractiveAvatar() {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
@@ -293,16 +292,10 @@ export default function InteractiveAvatar() {
 
           {chatMode === "alone_voice" && (
             <div>
-              holis
             </div>
           )}
         </CardFooter>
       </Card>
-      <p className="font-mono text-right">
-        <span className="font-bold">Console:</span>
-        <br />
-        {debug}
-      </p>
     </div>
   );
 }
