@@ -256,8 +256,6 @@ export default function InteractiveAvatar() {
               handleChangeChatMode(v);
             }}
           >
-            <Tab key="text_mode" title="Modo chat" />
-            <Tab key="voice_mode" title="Modo chat de voz" />
             <Tab key="alone_voice" title="Modo voz" />
           </Tabs>
           {chatMode === "text_mode" && (
