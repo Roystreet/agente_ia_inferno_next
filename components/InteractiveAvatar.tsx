@@ -30,6 +30,8 @@ import ElevenLab from "./elevenLab";
 
 const OPENIA_API: string = process.env.NEXT_PUBLIC_OPENIA_API_KEY || "";
 
+console.log("OPENIA_API", OPENIA_API);
+
 export default function InteractiveAvatar() {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [isLoadingRepeat, setIsLoadingRepeat] = useState(false);
@@ -55,9 +57,9 @@ export default function InteractiveAvatar() {
       });
       const token = await response.text();
       console.log("Access Token:", token); // Log the token to verify
-      const assistant = new OpenAIAssistant(OPENIA_API);
-      await assistant.initialize();
-      setIaAssistent(assistant);
+      //const assistant = new OpenAIAssistant(OPENIA_API);
+      //await assistant.initialize();
+      //setIaAssistent(assistant);
       return token;
     } catch (error) {
       console.error("Error fetching access token:", error);
@@ -99,16 +101,18 @@ export default function InteractiveAvatar() {
     try {
       const res = await avatar.current.createStartAvatar({
         quality: AvatarQuality.Low,
-        avatarName: 'Anna_public_3_20240108',
+        avatarName: '37f4d912aa564663a1cf8d63acd0e1ab',
+        knowledgeId: '2f9da453f56349d99c310b2af54d6683',
         voice: {
-          rate: 1.5, // 0.5 ~ 1.5
+          voiceId: '4b360d03a2dd415daf679f9f30485e5a',
+          rate: 1, // 0.5 ~ 1.5
           emotion: VoiceEmotion.EXCITED,
-          // elevenlabsSettings: {
-          //   stability: 1,
-          //   similarity_boost: 1,
-          //   style: 1,
-          //   use_speaker_boost: false,
-          // },
+          elevenlabsSettings: {
+            stability: 1,
+            similarity_boost: 1,
+            style: 1,
+            use_speaker_boost: false,
+          },
         },
         language: 'es',
         disableIdleTimeout: true,
@@ -134,8 +138,7 @@ export default function InteractiveAvatar() {
       return;
     }
     // speak({ text: text, task_type: TaskType.REPEAT })
-    const response = await iaAssistent.getResponse(text);
-    await avatar.current.speak({ text: response, taskType: TaskType.REPEAT, taskMode: TaskMode.SYNC }).catch((e) => {
+    await avatar.current.speak({ text: text, taskType: TaskType.TALK, taskMode: TaskMode.SYNC }).catch((e) => {
       setDebug(e.message);
     });
     setIsLoadingRepeat(false);
@@ -257,6 +260,7 @@ export default function InteractiveAvatar() {
             }}
           >
             <Tab key="alone_voice" title="Modo voz" />
+            <Tab key="voice_mode" title="Modo voz con texto" />
           </Tabs>
           {chatMode === "text_mode" && (
             <div className="w-full flex relative">

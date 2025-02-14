@@ -87,7 +87,7 @@ const ElevenLab = () => {
     return (
         <>
             <Avatar className="w-48 h-48" >
-                <AvatarImage src="/Dante.jpeg" alt="Dante" />
+                <AvatarImage src="/DANTE.svg" alt="Dante" />
                 <AvatarFallback>Dante</AvatarFallback>
             </Avatar>
             <Separator className="my-4" />
