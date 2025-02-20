@@ -10,7 +10,7 @@ export default function NavBar() {
     <Navbar className="w-full">
       <NavbarBrand>
         <div className=" bg-clip-text ml-4 tex">
-          <p className="text-xl font-semibold text-transparent text-center text-slate-100">
+          <p className="text-xl font-semibold text-transparent text-center text-white">
             Avatar Dante Inferno
           </p>
         </div>
