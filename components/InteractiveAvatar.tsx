@@ -30,7 +30,6 @@ import ElevenLab from "./elevenLab";
 
 const OPENIA_API: string = process.env.NEXT_PUBLIC_OPENIA_API_KEY || "";
 
-console.log("OPENIA_API", OPENIA_API);
 
 export default function InteractiveAvatar() {
   const [isLoadingSession, setIsLoadingSession] = useState(false);
@@ -217,20 +216,20 @@ export default function InteractiveAvatar() {
               </video>
               <div className="flex flex-col gap-2 absolute bottom-3 right-3">
                 <Button
-                  className="bg-gradient-to-tr from-indigo-500 to-indigo-300 text-white rounded-lg"
+                  className="bg-primary text-white rounded-lg"
                   size="md"
                   variant="shadow"
                   onClick={handleInterrupt}
                 >
-                  Interrupt task
+                  Interrupir conversación
                 </Button>
                 <Button
-                  className="bg-gradient-to-tr from-indigo-500 to-indigo-300  text-white rounded-lg"
+                  className="bg-primary  text-white rounded-lg"
                   size="md"
                   variant="shadow"
                   onClick={endSession}
                 >
-                  End session
+                  Terminar Conversacion
                 </Button>
               </div>
             </div>
@@ -238,7 +237,7 @@ export default function InteractiveAvatar() {
             <div className="h-full justify-center items-center flex flex-col gap-8 w-[500px] self-center">
 
               <Button
-                className="bg-gradient-to-tr from-indigo-500 to-indigo-300 w-full text-white"
+                className="bg-primary w-full text-white"
                 size="md"
                 variant="shadow"
                 onClick={startSession}
@@ -260,7 +259,7 @@ export default function InteractiveAvatar() {
             }}
           >
             <Tab key="alone_voice" title="Modo voz" />
-            <Tab key="voice_mode" title="Modo voz con texto" />
+            <Tab key="voice_mode" title="Modo video" />
           </Tabs>
           {chatMode === "text_mode" && (
             <div className="w-full flex relative">
@@ -274,7 +273,7 @@ export default function InteractiveAvatar() {
                 onSubmit={handleSpeak}
               />
               {text && (
-                <Chip className="absolute right-16 top-3">Listening</Chip>
+                <Chip className="absolute right-16 top-3">Escuchando</Chip>
               )}
             </div>
           )}
@@ -283,7 +282,7 @@ export default function InteractiveAvatar() {
             <div className="w-full text-center">
               <Button
                 isDisabled={!isUserTalking}
-                className="bg-gradient-to-tr from-indigo-500 to-indigo-300 text-white"
+                className="bg-primary text-white"
                 size="md"
                 variant="shadow"
               >

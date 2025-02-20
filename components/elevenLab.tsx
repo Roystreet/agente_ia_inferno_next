@@ -87,7 +87,7 @@ const ElevenLab = () => {
     return (
         <>
             <Avatar className="w-48 h-48" >
-                <AvatarImage src="/DANTE.svg" alt="Dante" />
+                <AvatarImage src="/dante.png" alt="Dante" />
                 <AvatarFallback>Dante</AvatarFallback>
             </Avatar>
             <Separator className="my-4" />
@@ -138,13 +138,13 @@ const ElevenLab = () => {
                         <div className="text-center text-sm">
                             {status === "connected" && (
                                 <p className="text-green-600">
-                                    {isSpeaking ? "Agent is speaking..." : "Listening..."}
+                                    {isSpeaking ? "Dante esta hablando..." : "Dante esta escuchando..."}
                                 </p>
                             )}
                             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
                             {!hasPermission && (
                                 <p className="text-yellow-600">
-                                    Please allow microphone access to use voice chat
+                                    Por favor activar el microfono para continuar
                                 </p>
                             )}
                         </div>

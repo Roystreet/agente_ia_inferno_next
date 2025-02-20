@@ -1,20 +1,15 @@
+import localFont from "next/font/local";
 import "@/styles/globals.css";
 import clsx from "clsx";
 import { Metadata, Viewport } from "next";
 
 import { Providers } from "./providers";
-
-import { Fira_Code as FontMono, Inter as FontSans } from "next/font/google";
 import NavBar from "@/components/NavBar";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-const fontMono = FontMono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
+// Importar la fuente local
+const fontBalto = localFont({
+  src: "./fonts/Balto.ttf", // 🔥 Asegúrate de que esté en "public/fonts/"
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +18,7 @@ export const metadata: Metadata = {
     template: `%s - HeyGen Interactive Avatar SDK Demo`,
   },
   icons: {
-    icon: "/heygen-logo.png",
+    icon: "/INFERNO_LOGOS-05.png",
   },
 };
 
@@ -43,7 +38,7 @@ export default function RootLayout({
     <html
       suppressHydrationWarning
       lang="en"
-      className={`${fontSans.variable} ${fontMono.variable} font-sans`}
+      className={fontBalto.className}
     >
       <head />
       <body className={clsx("min-h-screen bg-background antialiased")}>
